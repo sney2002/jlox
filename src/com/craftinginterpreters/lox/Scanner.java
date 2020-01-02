@@ -75,7 +75,25 @@ public class Scanner {
             case '<': addToken(match('=') ? LESS_EQUAL : LESS); break;
             case '>': addToken(match('=') ? GREATER_EQUAL : GREATER); break;
             case '/':
-                if (match('/')) {
+                // Block commends
+                if (match('*')) {
+                    while (!isAtEnd() && !(peek() == '*' && nextPeek() == '/')) {
+                        if (peek() == '\n') {
+                            line++;
+                        }
+
+                        advance();
+                    }
+
+                    if (isAtEnd()) {
+                        Lox.error(line, "Unterminated comment.");
+                    } else {
+                        // Remove "*/"
+                        advance();
+                        advance();
+                    }
+
+                } else if (match('/')) {
                     while (peek() != '\n' && !isAtEnd()) advance();
                 } else {
                     addToken(SLASH);
