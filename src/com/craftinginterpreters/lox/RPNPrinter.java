@@ -25,6 +25,11 @@ public class RPNPrinter implements Expr.Visitor<String> {
         return expr.operator.lexeme + expr.right.accept(this);
     }
 
+    @Override
+    public String visitTernaryExpr(Expr.Ternary expr) {
+        return "";
+    }
+
     private String rnpPrint(String name, Expr... exprs) {
         StringBuilder builder = new StringBuilder();
 
