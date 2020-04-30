@@ -5,6 +5,7 @@ import java.util.Map;
 
 public class Environment {
     final Environment enclosing;
+    final Object placeholder = new Object();
     private final Map<String, Object> values = new HashMap<>();
 
     Environment() {
@@ -15,13 +16,19 @@ public class Environment {
         this.enclosing = enclosing;
     }
 
-    void define(String name, Object value) {
-        values.put(name, value);
+    void define(String name) {
+        values.put(name, placeholder);
     }
 
     Object get(Token name) {
         if (values.containsKey(name.lexeme)) {
-            return values.get(name.lexeme);
+            Object value = values.get(name.lexeme);
+
+            if (placeholder.equals(value)) {
+                throw new RuntimeError(name, "Variable '" + name.lexeme + "' referenced before assignment.");
+            }
+
+            return value;
         }
 
         if (enclosing != null) return enclosing.get(name);
