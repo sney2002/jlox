@@ -25,7 +25,7 @@ public class Parser {
     }
 
     private Expr expression() {
-        return ternary();
+        return assignment();
     }
 
     private Stmt declaration() {
@@ -68,6 +68,24 @@ public class Parser {
         Expr value = expression();
         consume(SEMICOLON, "Expect ';' after value");
         return new Stmt.Expression(value);
+    }
+
+    private Expr assignment() {
+        Expr expr = ternary();
+
+        if (match(EQUAL)) {
+            Token equals = previous();
+            Expr value = assignment();
+
+            if (expr instanceof Expr.Variable) {
+                Token name = ((Expr.Variable)expr).name;
+                return new Expr.Assign(name, value);
+            }
+
+            error(equals, "Invalid assignment target.");
+        }
+
+        return expr;
     }
 
     private Expr ternary() {
