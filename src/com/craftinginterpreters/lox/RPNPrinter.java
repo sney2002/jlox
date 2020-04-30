@@ -26,6 +26,11 @@ public class RPNPrinter implements Expr.Visitor<String> {
     }
 
     @Override
+    public String visitVariableExpr(Expr.Variable expr) {
+        return expr.name.lexeme;
+    }
+
+    @Override
     public String visitTernaryExpr(Expr.Ternary expr) {
         return "";
     }
