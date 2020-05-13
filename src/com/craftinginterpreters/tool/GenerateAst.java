@@ -31,7 +31,8 @@ public class GenerateAst {
                 "If         : Expr condition, Stmt thenBranch, Stmt elseBranch",
                 "Print      : Expr expression",
                 "Var        : Token name, Expr initializer",
-                "While      : Expr condition, Stmt body"
+                "While      : Expr condition, Stmt body",
+                "Break"
         ));
     }
 
@@ -49,7 +50,7 @@ public class GenerateAst {
 
         for (String type : types) {
             String className = type.split(":")[0].trim();
-            String fields = type.split(":")[1].trim();
+            String fields = type.split(":").length > 1 ? type.split(":")[1].trim() : "";
             defineType(writer, baseName, className, fields);
         }
 
@@ -76,15 +77,19 @@ public class GenerateAst {
     private static void defineType(PrintWriter writer, String baseName, String className, String fieldList) {
         writer.println("    static class " + className + " extends " + baseName + " {");
 
-        writer.println("        " + className + "(" + fieldList + ") {");
+        String[] fields = null;
 
-        String[] fields = fieldList.split(", ");
-        for (String field : fields) {
-            String name = field.split(" ")[1];
-            writer.println("            this." + name + " = " + name + ";");
+        if (fieldList.length() > 0) {
+            writer.println("        " + className + "(" + fieldList + ") {");
+
+            fields = fieldList.split(", ");
+            for (String field : fields) {
+                String name = field.split(" ")[1];
+                writer.println("            this." + name + " = " + name + ";");
+            }
+
+            writer.println("        }");
         }
-
-        writer.println("        }");
 
         writer.println();
         writer.println("        @Override");
@@ -94,8 +99,10 @@ public class GenerateAst {
         writer.println("        }");
 
         writer.println();
-        for (String field : fields) {
-            writer.println("        final " + field + ";");
+        if (fields != null) {
+            for (String field : fields) {
+                writer.println("        final " + field + ";");
+            }
         }
 
         writer.println("    }");
