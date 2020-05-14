@@ -20,6 +20,8 @@ public class Environment {
         values.put(name, placeholder);
     }
 
+    void define(String name, Object value) { values.put(name, value); }
+
     Object get(Token name) {
         if (values.containsKey(name.lexeme)) {
             Object value = values.get(name.lexeme);

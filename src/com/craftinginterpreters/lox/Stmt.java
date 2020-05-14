@@ -5,13 +5,13 @@ import java.util.List;
 abstract class Stmt {
     interface Visitor<R> {
         R visitBlockStmt(Block stmt);
+        R visitBreakStmt(Break stmt);
+        R visitContinueStmt(Continue stmt);
         R visitExpressionStmt(Expression stmt);
         R visitIfStmt(If stmt);
         R visitPrintStmt(Print stmt);
         R visitVarStmt(Var stmt);
         R visitWhileStmt(While stmt);
-        R visitBreakStmt(Break stmt);
-        R visitContinueStmt(Continue stmt);
     }
 
     static class Block extends Stmt {
@@ -25,6 +25,24 @@ abstract class Stmt {
         }
 
         final List<Stmt> statements;
+    }
+
+    static class Break extends Stmt {
+
+        @Override
+        <R> R accept(Visitor<R> visitor) {
+            return visitor.visitBreakStmt(this);
+        }
+
+    }
+
+    static class Continue extends Stmt {
+
+        @Override
+        <R> R accept(Visitor<R> visitor) {
+            return visitor.visitContinueStmt(this);
+        }
+
     }
 
     static class Expression extends Stmt {
@@ -100,24 +118,6 @@ abstract class Stmt {
         final Expr condition;
         final Stmt body;
         final Expr increment;
-    }
-
-    static class Break extends Stmt {
-
-        @Override
-        <R> R accept(Visitor<R> visitor) {
-            return visitor.visitBreakStmt(this);
-        }
-
-    }
-
-    static class Continue extends Stmt {
-
-        @Override
-        <R> R accept(Visitor<R> visitor) {
-            return visitor.visitContinueStmt(this);
-        }
-
     }
 
 
