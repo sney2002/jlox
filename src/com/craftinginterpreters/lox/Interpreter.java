@@ -251,7 +251,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         if (arguments.size() != function.arity()) {
             throw new RuntimeError(
                 expr.paren,
-                    "Expeced " + function.arity() + " arguments but got" + arguments.size() + "."
+                    "Expeced " + function.arity() + " arguments but got " + arguments.size() + "."
             );
         }
 
