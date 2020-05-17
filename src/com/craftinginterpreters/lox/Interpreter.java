@@ -8,6 +8,8 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     private Environment environment = globals;
     private boolean loopBreak;
     private boolean loopContinue;
+    public boolean hasReturn;
+    public Object returnValue;
 
     Interpreter() {
         globals.define("clock", new LoxCallable() {
@@ -66,6 +68,18 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     }
 
     @Override
+    public Void visitReturnStmt(Stmt.Return stmt) {
+        returnValue = null;
+        if (stmt.value != null) {
+            returnValue = evaluate(stmt.value);
+        }
+
+        hasReturn = true;
+
+        return null;
+    }
+
+    @Override
     public Void visitBlockStmt(Stmt.Block stmt) {
         executeBlock(stmt.statements, new Environment(environment));
         return null;
@@ -96,7 +110,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
                 loopContinue = false;
             }
 
-            if (loopBreak) break;
+            if (loopBreak || hasReturn) break;
         }
 
         loopBreak = false;
@@ -300,7 +314,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
             for (Stmt stmt : statements) {
                 execute(stmt);
-                if (loopBreak || loopContinue) break;
+                if (loopBreak || loopContinue || hasReturn) break;
             }
         } finally {
             this.environment = previous;
