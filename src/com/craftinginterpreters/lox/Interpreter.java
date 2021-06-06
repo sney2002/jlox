@@ -3,6 +3,8 @@ package com.craftinginterpreters.lox;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.craftinginterpreters.lox.TokenType.IDENTIFIER;
+
 public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     final Environment globals = new Environment();
     private Environment environment = globals;
@@ -154,6 +156,11 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         }
 
         return evaluate(expr.right);
+    }
+
+    @Override
+    public Object visitFunctionExpr(Expr.Function expr) {
+        return new LoxFunction(new Stmt.Function(null,   expr.params, expr.body), environment);
     }
 
     @Override

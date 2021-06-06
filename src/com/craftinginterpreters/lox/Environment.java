@@ -17,7 +17,9 @@ public class Environment {
     }
 
     void define(String name) {
-        values.put(name, placeholder);
+        if (! values.containsKey(name)) {
+            values.put(name, placeholder);
+        }
     }
 
     void define(String name, Object value) { values.put(name, value); }
